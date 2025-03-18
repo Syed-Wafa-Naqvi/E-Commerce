@@ -1,6 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
-import os
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -18,7 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'store',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -87,7 +87,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'xyeed11111@gmail.com'
 EMAIL_HOST_PASSWORD = 'mryrvmzxzwfmubqe'
 DEFAULT_FROM_EMAIL = 'xyeed11111@gmail.com'
-AUTH_USER_MODEL = 'store.CustomUser'
+AUTH_USER_MODEL = 'users.CustomUser'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -101,7 +101,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
-    'TOKEN_USER_CLASS': 'store.models.CustomUser',
+    'TOKEN_USER_CLASS': 'users.models.CustomUser',
     'SIGNING_KEY': SECRET_KEY,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',

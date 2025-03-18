@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import signup, user_login, dashboard, user_logout,verify_otp,forgot_password,reset_password
+from users.views import signup, user_login, dashboard, user_logout, verify_otp, forgot_password, reset_password
+
 
 
 urlpatterns = [

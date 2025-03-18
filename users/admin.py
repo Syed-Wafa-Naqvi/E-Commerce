@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from store.models import CustomUser
+from users.models import CustomUser
 
 admin.site.register(CustomUser)
