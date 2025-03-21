@@ -1,14 +1,20 @@
 from pathlib import Path
 from datetime import timedelta
+import os
+
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 SECRET_KEY = 'django-insecure-%&jl5jm@v4)ajx*5trt15vb!(vu^hhgt@$_m!z3^82xb=cza*x'
 
 DEBUG = True
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
-ALLOWED_HOSTS = []
+
+
+
 
 
 INSTALLED_APPS = [
@@ -19,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'store'
 ]
 
 MIDDLEWARE = [

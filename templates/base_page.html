@@ -1,0 +1,93 @@
+<!-- store/templates/base_page.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day Dreamer - Welcome</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ee0b0b, #60368a);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .logo {
+            width: 300px; /* Adjust size as needed */
+            height: auto;
+            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.3)); /* Stylish shadow */
+            animation: glow 2s ease-in-out infinite alternate; /* Glowing effect */
+        }
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 20px #ff6f61) drop-shadow(0 0 30px #d4a5ff);
+            }
+            to {
+                filter: drop-shadow(0 0 20px #fff) drop-shadow(0 0 30px #ff6f61) drop-shadow(0 0 40px #d4a5ff);
+            }
+        }
+        .welcome-text {
+            font-size: 2.5rem;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .prompt-text {
+            font-size: 1.5rem;
+            color: #ddd;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        .btn-custom {
+            font-size: 1.2rem;
+            padding: 10px 30px;
+            border-radius: 25px;
+            margin: 0 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn-signup {
+            background: linear-gradient(to right, #ff6f61, #d4a5ff);
+            border: none;
+            color: #fff;
+        }
+        .btn-signup:hover {
+            background: linear-gradient(to right, #e65a50, #c08fe6);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .btn-login {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            border: none;
+            color: #fff;
+        }
+        .btn-login:hover {
+            background: linear-gradient(to right, #3e9dfe, #00d2fe);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <h2 class="welcome-text">Welcome to Day Dreamer E-Commerce</h2>
+    <p class="prompt-text">Ready to Start Shopping?</p>
+    <div class="d-flex">
+        <a href="{% url 'users:signup' %}" class="btn btn-signup btn-custom">Sign Up</a>
+        <a href="{% url 'users:login' %}" class="btn btn-login btn-custom">Login</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

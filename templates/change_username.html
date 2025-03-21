@@ -1,10 +1,10 @@
-<!-- users/templates/reset_password.html -->
+<!-- users/templates/change_username.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password | Day Dreamer</title>
+    <title>Change Username | Day Dreamer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
@@ -68,17 +68,12 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{ request.user.username|default:"Guest" }}
+                            {{ request.user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            {% if request.user.is_authenticated %}
-                                <li><a class="dropdown-item" href="{% url 'users:change_username' %}">Change Username</a></li>
-                                <li><a class="dropdown-item" href="{% url 'users:change_password' %}">Change Password</a></li>
-                                <li><a class="dropdown-item" href="{% url 'users:logout' %}">Logout</a></li>
-                            {% else %}
-                                <li><a class="dropdown-item" href="{% url 'users:login' %}">Login</a></li>
-                                <li><a class="dropdown-item" href="{% url 'users:signup' %}">Sign Up</a></li>
-                            {% endif %}
+                            <li><a class="dropdown-item" href="{% url 'users:change_username' %}">Change Username</a></li>
+                            <li><a class="dropdown-item" href="{% url 'users:change_password' %}">Change Password</a></li>
+                            <li><a class="dropdown-item" href="{% url 'users:logout' %}">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -88,7 +83,7 @@
 
     <div class="container mt-5">
         <div class="form-container">
-            <h2 class="text-center mb-4">Reset Password</h2>
+            <h2 class="text-center mb-4">Change Username</h2>
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -100,15 +95,11 @@
             <form method="post">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label for="new_password" class="form-label">New Password</label>
-                    <input type="password" class="form-control" id="new_password" name="new_password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="confirm_password" class="form-label">Confirm New Password</label>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    <label for="new_username" class="form-label">New Username</label>
+                    <input type="text" class="form-control" id="new_username" name="new_username" value="{{ request.user.username }}" required>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Reset Password</button>
+                    <button type="submit" class="btn btn-primary">Update Username</button>
                     <a href="{% url 'store:dashboard' %}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
