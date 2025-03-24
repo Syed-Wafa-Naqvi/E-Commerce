@@ -48,6 +48,7 @@
             background: #6c757d;
             border: none;
             cursor: not-allowed;
+            opacity: 0.6;
         }
     </style>
 </head>
@@ -78,7 +79,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'store:view_cart' %}">
-                            <i class="bi bi-bag"></i> ({{ cart_items.count }})
+                            <i class="bi bi-bag"></i> ({{ cart_items_count }})
                         </a>
                     </li>
                     <li class="nav-item dropdown">
@@ -109,12 +110,11 @@
             </div>
             <div class="col-md-6">
                 <h1>{{ product.name }}</h1>
-                <p class="lead">${{ product.price }}</p>
+                <p class="lead">${{ product.price|floatformat:2 }}</p>
                 <p><strong>Category:</strong> {{ product.category.name }}</p>
                 <p>{{ product.description|default:"No description available for this product." }}</p>
-                <p><strong>Stock:</strong> {{ product.stock }} available</p>
                 <div class="d-flex">
-                    {% if product.stock == 0 or cart_quantity == product.stock %}
+                    {% if is_out_of_stock %}
                         <button class="btn btn-disabled me-2" disabled>Out of Stock</button>
                     {% else %}
                         <a href="{% url 'store:add_to_cart' product.id %}" class="btn btn-success me-2">Add to Cart</a>

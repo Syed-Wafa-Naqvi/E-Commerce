@@ -38,13 +38,3 @@ class CartItem(models.Model):
 
     def get_total_price(self):
         return self.product.price * self.quantity
-
-
-
-# class Order(TimeStampMixin):
-#     user = models.ForeignKey(Users, on_delete=models.CASCADE)
-#     products = models.ManyToManyField(Product)
-#     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-#     status = 
-
-

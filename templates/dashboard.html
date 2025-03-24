@@ -51,6 +51,12 @@
             background: #28a745;
             border: none;
         }
+        .btn-disabled {
+            background: #6c757d;
+            border: none;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
         .out-of-stock {
             position: absolute;
             top: 0;
@@ -96,7 +102,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'store:view_cart' %}">
-                            <i class="bi bi-bag"></i> ({{ cart_items.count }})
+                            <i class="bi bi-bag"></i> ({{ cart_items_count }})
                         </a>
                     </li>
                     <li class="nav-item dropdown">
@@ -134,19 +140,24 @@
                 {% with product=item.product %}
                     <div class="col-md-3 mb-4">
                         <div class="product-card p-3">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
-                            {% else %}
-                                <div class="product-image bg-light d-flex align-items-center justify-content-center">
-                                    <p class="text-muted">No Image</p>
-                                </div>
-                            {% endif %}
+                            <div style="position: relative;">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                {% else %}
+                                    <div class="product-image bg-light d-flex align-items-center justify-content-center">
+                                        <p class="text-muted">No Image</p>
+                                    </div>
+                                {% endif %}
+                                {% if item.is_out_of_stock %}
+                                    <div class="out-of-stock">Out of Stock</div>
+                                {% endif %}
+                            </div>
                             <h5 class="mt-2">{{ product.name }}</h5>
                             <p>${{ product.price }}</p>
                             <div class="d-flex justify-content-between">
                                 <a href="{% url 'store:product_detail' product.id %}" class="btn btn-primary btn-sm">View Details</a>
                                 {% if item.is_out_of_stock %}
-                                    <div class="out-of-stock">Product out of stock</div>
+                                    <button class="btn btn-disabled btn-sm" disabled>Add to Cart</button>
                                 {% else %}
                                     <a href="{% url 'store:add_to_cart' product.id %}" class="btn btn-success btn-sm">Add to Cart</a>
                                 {% endif %}
