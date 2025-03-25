@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Product, Category
+from .models import Product, Category,OrderShipment, CartItem
 from django.contrib import messages
 from .utils import  prepare_products
+from .forms import CheckoutForm
 
 def base_page(request):
     return render(request, 'base_page.html')
@@ -12,7 +13,7 @@ def dashboard(request):
     products = Product.objects.all()
     categories = Category.objects.all()
     cart = request.session.get('cart', {})
-    cart_items_count = sum(cart.values())
+    cart_items_count = len(cart)
     products_with_status = prepare_products(products, cart)
     return render(request, 'dashboard.html', {'products_with_status': products_with_status,'categories': categories,'category': None,'cart_items_count': cart_items_count})
 
@@ -23,8 +24,8 @@ def category_view(request, id):
     categories = Category.objects.all()
     cart = request.session.get('cart', {})
     cart_items_count = sum(cart.values())
-    products_status = prepare_products(products, cart)
-    return render(request, 'dashboard.html', {'products_status': products_status,'categories': categories,'category': category,'cart_items_count': cart_items_count})
+    products_with_status = prepare_products(products, cart)
+    return render(request, 'dashboard.html', {'products_with_status': products_with_status,'categories': categories,'category': category,'cart_items_count': cart_items_count})
 
 @login_required
 def product_detail(request, product_id):
@@ -106,3 +107,52 @@ def clear_cart(request):
 
 def custom_404(request, exception):
     return render(request, '404.html', status=404)
+
+@login_required
+def checkout(request):
+    cart = request.session.get('cart', {})
+    if not cart:
+        messages.error(request, "Your cart is empty!")
+        return redirect('store:view_cart')
+    cart_items = []
+    total_price = 0
+    for product_id, quantity in cart.items():
+        product = get_object_or_404(Product, id=product_id)
+        item_total = product.price * quantity
+        total_price += item_total
+        cart_items.append({'product': product, 'quantity': quantity, 'total': item_total})
+
+    if request.method == "POST":
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            address = form.cleaned_data['address']
+            phone = form.cleaned_data['phone']
+            order = OrderShipment.objects.create(address=address, phone=phone, user=request.user)
+            
+            ordered_items = []
+            for product_id, quantity in cart.items():
+                product = get_object_or_404(Product, id=product_id)
+                if product.stock >= quantity:
+                    product.stock -= quantity
+                    product.save()
+                    item = CartItem.objects.create(product=product, quantity=quantity, user=request.user)
+                    order.items.add(item)
+                    ordered_items.append({'product': product, 'quantity': quantity, 'total': product.price * quantity})
+                else:
+                    messages.error(request, f"Insufficient stock for {product.name}. Order not placed.")
+                    return redirect('store:view_cart')
+            
+            order.save()
+            request.session['cart'] = {}  
+            messages.success(request, "Order placed successfully!")
+            return render(request, 'thank_you.html', {'ordered_items': ordered_items})
+    else:
+        form = CheckoutForm()
+
+    categories = Category.objects.all()
+    return render(request, 'checkout.html', {'form': form,'cart_items': cart_items,'total_price': total_price,'categories': categories})
+
+@login_required
+def thank_you(request):
+    ordered_items = request.session.get('ordered_items', [])
+    return render(request, 'thank_you.html')

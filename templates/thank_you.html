@@ -3,15 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password | Day Dreamer</title>
+    <title>Thank You | Day Dreamer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        body {
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
             background: linear-gradient(135deg, #ee0b0b, #60368a);
-            min-height: 100vh;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             color: #fff;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .navbar {
             background: rgba(255, 255, 255, 0.1);
@@ -27,72 +34,77 @@
             color: #fff !important;
             font-size: 1.1rem;
         }
-        .container-main {
-            max-width: 500px;
-            margin: 5rem auto;
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .thank-you-container {
+            max-width: 700px;
+            width: 90%;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 10px;
-            padding: 2rem;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            color: #333;
-        }
-        h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
             text-align: center;
-            margin-bottom: 2rem;
-        }
-        .form-label {
-            font-weight: 600;
             color: #333;
-            margin-bottom: 0.5rem;
         }
-        .form-control {
-            border-radius: 5px;
-            border: 1px solid #ced4da;
-            padding: 0.75rem;
-            font-size: 1rem;
+        .thank-you-container h1 {
+            color: #28a745;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        .thank-you-container p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .order-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .table {
+            color: #333;
         }
         .btn-primary {
-            background: #007bff;
+            background-color: #007bff;
             border: none;
+            padding: 10px 20px;
+            font-size: 16px;
             border-radius: 5px;
-            padding: 0.75rem 1.5rem;
             transition: background 0.3s ease;
         }
         .btn-primary:hover {
-            background: #0056b3;
-        }
-        .btn-secondary {
-            background: #6c757d;
-            border: none;
-            border-radius: 5px;
-            padding: 0.75rem 1.5rem;
-            transition: background 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-        .alert {
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
+            background-color: #0056b3;
         }
         footer {
             text-align: center;
             padding: 1rem;
             color: #ddd;
             font-size: 0.9rem;
-            position: fixed;
-            bottom: 0;
             width: 100%;
         }
-        @media (max-width: 576px) {
-            .d-flex { flex-direction: column; }
-            .btn { margin: 0.5rem 0; }
+        @media (max-width: 768px) {
+            .thank-you-container {
+                width: 95%;
+                padding: 15px;
+            }
+            .thank-you-container h1 {
+                font-size: 24px;
+            }
+            .thank-you-container p {
+                font-size: 14px;
+            }
+            .btn-primary {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
         }
     </style>
 </head>
@@ -119,7 +131,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'store:view_cart' %}">
-                            <i class="bi bi-bag me-1"></i> ({{ cart_items|length }})
+                            <i class="bi bi-bag me-1"></i> Your Cart
                         </a>
                     </li>
                     <li class="nav-item dropdown">
@@ -142,31 +154,47 @@
         </div>
     </nav>
 
-    <div class="container-main">
-        <h1>Reset Password</h1>
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="new_password" class="form-label">New Password</label>
-                <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Enter new password" required>
+    <div class="main-content">
+        <div class="thank-you-container">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 50px;"></i>
+            <h1>Thank You for Shopping with Day Dreamer!</h1>
+            <p>Your order <strong>{{ order_number }}</strong> has been successfully placed.</p>
+
+            <div class="order-summary">
+                <h4 class="text-center mb-3">Order Summary</h4>
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in ordered_items %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.product.price|floatformat:2 }}</td>
+                            <td>${{ item.total|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                    
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
-            <div class="mb-3">
-                <label for="confirm_password" class="form-label">Confirm New Password</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm new password" required>
-            </div>
-            <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary me-2" aria-label="Reset Password">Reset Password</button>
-                <a href="{% url 'store:dashboard' %}" class="btn btn-secondary" aria-label="Cancel">Cancel</a>
-            </div>
-        </form>
+            <p>Your items will be delivered at your doorstep in 3 to 4 working days.</p>
+            <p>For any queries, please contact our customer support.</p>
+            <p>Have a good day.</p>
+            <a href="{% url 'store:dashboard' %}" class="btn btn-primary mt-3">
+                <i class="bi bi-shop"></i> Continue Shopping
+            </a>
+        </div>
     </div>
 
     <footer>
