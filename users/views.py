@@ -1,4 +1,3 @@
-# users/views.py
 from django.contrib.auth import login, logout, authenticate
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
@@ -9,7 +8,7 @@ from django.utils.timezone import now, timedelta
 from django.contrib.auth.decorators import login_required
 from .models import CustomUser
 from .forms import SignUpForm
-from store.models import Category, CartItem
+from store.models import Category, Product
 import random
 
 def signup(request):
@@ -30,7 +29,7 @@ def signup(request):
             user.otp_created_at = now()
             user.is_verified = False
             user.save()
-            send_mail(subject="Your OTP for Email Verification", message=f"Your OTP is {user.otp}. Please verify your email within 10 minutes.", from_email=settings.EMAIL_HOST_USER, recipient_list=[user.email], fail_silently=False)
+            send_mail( subject="Your OTP for Email Verification",message=f"Your OTP is {user.otp}. Please verify your email within 10 minutes.",from_email=settings.EMAIL_HOST_USER,recipient_list=[user.email],fail_silently=False)
             request.session["email"] = user.email
             messages.success(request, "OTP sent to your email! Please verify within 10 minutes.")
             return redirect("users:verify_otp")
@@ -76,7 +75,13 @@ def forgot_password(request):
         user.otp = otp
         user.otp_created_at = now()
         user.save()
-        send_mail(subject="Password Reset OTP", message=f"Your OTP for password reset is {otp}. It will expire in 10 minutes.", from_email=settings.EMAIL_HOST_USER, recipient_list=[email], fail_silently=False)
+        send_mail(
+            subject="Password Reset OTP",
+            message=f"Your OTP for password reset is {otp}. It will expire in 10 minutes.",
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[email],
+            fail_silently=False
+        )
         request.session["email"] = email
         request.session["forgot_password_flow"] = True
         messages.success(request, "OTP has been sent to your email")
@@ -85,7 +90,15 @@ def forgot_password(request):
 
 def reset_password(request):
     categories = Category.objects.all()
-    cart_items = CartItem.objects.filter(user=request.user) if request.user.is_authenticated else []
+    cart = request.session.get('cart', {}) if request.user.is_authenticated else {}
+    cart_items = []
+    total_price = 0
+    for product_id, quantity in cart.items():
+        product = Product.objects.get(id=product_id)
+        item_total = product.price * quantity
+        total_price += item_total
+        cart_items.append({'product': product, 'quantity': quantity, 'total': item_total})
+
     if request.method == "POST":
         if request.user.is_authenticated:
             new_password = request.POST.get("new_password")
@@ -120,7 +133,12 @@ def reset_password(request):
                 del request.session["otp_verified"]
                 messages.success(request, "Password has been reset successfully. You can now log in.")
                 return redirect("users:login")
-    return render(request, "reset_password.html", {"categories": categories,"cart_items": cart_items})
+    return render(request, "reset_password.html", {
+        "categories": categories,
+        "cart_items": cart_items,
+        "total_price": total_price,
+        "cart_items_count": sum(cart.values())
+    })
 
 def user_login(request):
     if request.method == "POST":
@@ -145,7 +163,15 @@ def user_logout(request):
 @login_required
 def change_username(request):
     categories = Category.objects.all()
-    cart_items = CartItem.objects.filter(user=request.user)
+    cart = request.session.get('cart', {})
+    cart_items = []
+    total_price = 0
+    for product_id, quantity in cart.items():
+        product = Product.objects.get(id=product_id)
+        item_total = product.price * quantity
+        total_price += item_total
+        cart_items.append({'product': product, 'quantity': quantity, 'total': item_total})
+
     if request.method == "POST":
         new_username = request.POST.get("new_username")
         if not new_username:
@@ -159,7 +185,12 @@ def change_username(request):
         user.save()
         messages.success(request, "Username changed successfully!")
         return redirect("store:dashboard")
-    return render(request, "change_username.html", {"categories": categories,"cart_items": cart_items})
+    return render(request, "change_username.html", {
+        "categories": categories,
+        "cart_items": cart_items,
+        "total_price": total_price,
+        "cart_items_count": sum(cart.values())
+    })
 
 @login_required
 def change_password(request):

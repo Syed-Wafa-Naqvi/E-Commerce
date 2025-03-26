@@ -26,25 +26,12 @@ class Category(TimeStampMixin):
     def __str__(self):
         return self.name
 
-
-class CartItem(TimeStampMixin):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=0)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    date_added = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.quantity} x {self.product.name} for {self.user.username}"
-
-    def get_total_price(self):
-        return self.product.price * self.quantity
-
-
 class OrderShipment(TimeStampMixin):
     address = models.TextField()
     phone = models.CharField(max_length=20)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    items = models.ManyToManyField(CartItem)
-
+    items = models.JSONField(default=list)
     def __str__(self):
         return f"Order for {self.user.username}"
+    def total_price(self):
+        return sum(item['total'] for item in self.items) if self.items else 0

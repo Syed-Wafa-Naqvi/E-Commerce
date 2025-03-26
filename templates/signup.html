@@ -3,130 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Sign Up | Day Dreamer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            font-family: 'Poppins', sans-serif;
+            background-color: #F5F7FA;
+            color: #333333;
+        }
         body {
-            background: linear-gradient(135deg, #ee0b0b, #60368a);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .navbar {
+            background-color: #2C3E50;
+            padding: 1rem 0;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #FFFFFF !important;
+        }
+        .nav-link {
+            color: #FFFFFF !important;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #3498DB !important;
+        }
+        .dropdown-menu {
+            background-color: #FFFFFF;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .dropdown-item {
+            color: #333333;
+            font-size: 0.95rem;
+            transition: background-color 0.3s ease;
+        }
+        .dropdown-item:hover {
+            background-color: #F5F7FA;
+            color: #3498DB;
+        }
+        .main-content {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            padding: 2rem 1rem;
         }
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            background-color: rgba(255, 255, 255, 0.95);
+        .signup-container {
+            max-width: 500px;
+            width: 100%;
+            padding: 2rem;
+            background: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .signup-container h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 1.5rem;
+            text-align: center;
         }
         .form-label {
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #555555;
         }
-        .btn-primary {
-            background: linear-gradient(to right, #667eea, #764ba2);
-            border: none;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(to right, #5a6ece, #6a4292);
+        .form-control {
+            font-size: 0.95rem;
+            padding: 0.75rem;
+            border-radius: 5px;
+            border: 1px solid #E0E0E0;
+            transition: border-color 0.3s ease;
         }
         .form-control:focus {
-            border-color: #764ba2;
-            box-shadow: 0 0 8px rgba(118, 75, 162, 0.3);
+            border-color: #3498DB;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.2);
+        }
+        .btn-primary {
+            background-color: #2C3E50;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background-color: #3498DB;
         }
         .alert {
-            border-radius: 8px;
+            font-size: 0.9rem;
+            padding: 0.75rem;
+            border-radius: 5px;
+        }
+        .alert-success {
+            background-color: #E8F5E9;
+            color: #28A745;
+        }
+        .alert-danger {
+            background-color: #FFEBEE;
+            color: #DC3545;
+        }
+        footer {
+            background-color: #2C3E50;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+        @media (max-width: 768px) {
+            .signup-container {
+                padding: 1.5rem;
+            }
+            .signup-container h2 {
+                font-size: 1.5rem;
+            }
+            .form-control {
+                font-size: 0.9rem;
+                padding: 0.5rem;
+            }
+            .btn-primary {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+            }
         }
     </style>
 </head>
-<body class="bg-light">
-    <div class="container">
-        <div class="card mx-auto p-4 shadow" style="max-width: 400px;">
-            <h3 class="text-center mb-4">Sign Up</h3>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'store:dashboard' %}">Day Dreamer</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:signup' %}">Sign Up</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
+    <div class="main-content">
+        <div class="signup-container">
+            <h2>Sign Up</h2>
             {% if messages %}
-                <div class="alert alert-info">
-                    {% for message in messages %}
-                        <p class="mb-0">{{ message }}</p>
-                    {% endfor %}
-                </div>
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
             {% endif %}
-
-            {% if form.errors %}
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        {% for field, errors in form.errors.items %}
-                            {% for error in errors %}
-                                <li><strong>{{ field|capfirst }}</strong>: {{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-
-            <form method="POST">
+            <form method="post">
                 {% csrf_token %}
-
-                <!-- Username Field -->
                 <div class="mb-3">
-                    <label for="id_username" class="form-label">Username</label>
-                    <input type="text" name="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="id_username" value="{{ form.username.value|default_if_none:'' }}" required>
-                    {% if form.username.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.username.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                    {{ form.email }}
                 </div>
-
-                <!-- Email Field -->
                 <div class="mb-3">
-                    <label for="id_email" class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="id_email" value="{{ form.email.value|default_if_none:'' }}" required>
-                    {% if form.email.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.email.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                    {{ form.username }}
                 </div>
-
-                <!-- Password Field -->
                 <div class="mb-3">
-                    <label for="id_password1" class="form-label">Password</label>
-                    <input type="password" name="password1" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" id="id_password1" required>
-                    {% if form.password1.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.password1.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                    <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                    {{ form.password1 }}
                 </div>
-
-                <!-- Confirm Password Field -->
                 <div class="mb-3">
-                    <label for="id_password2" class="form-label">Confirm Password</label>
-                    <input type="password" name="password2" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" id="id_password2" required>
-                    {% if form.password2.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.password2.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                    <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                    {{ form.password2 }}
                 </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
             </form>
-
-            <!-- Login Link -->
-            <p class="mt-3 text-center">
-                Already have an account? <a href="{% url 'users:login' %}">Login</a>
-            </p>
         </div>
     </div>
+
+    <footer>
+        © 2025 Day Dreamer E-Commerce. All rights reserved.
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

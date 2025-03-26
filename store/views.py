@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Product, Category,OrderShipment, CartItem
+from .models import Product, Category,OrderShipment
 from django.contrib import messages
 from .utils import  prepare_products
 from .forms import CheckoutForm
@@ -121,27 +121,27 @@ def checkout(request):
         item_total = product.price * quantity
         total_price += item_total
         cart_items.append({'product': product, 'quantity': quantity, 'total': item_total})
-
     if request.method == "POST":
         form = CheckoutForm(request.POST)
         if form.is_valid():
             address = form.cleaned_data['address']
             phone = form.cleaned_data['phone']
             order = OrderShipment.objects.create(address=address, phone=phone, user=request.user)
-            
             ordered_items = []
+            order_items = []
             for product_id, quantity in cart.items():
                 product = get_object_or_404(Product, id=product_id)
                 if product.stock >= quantity:
                     product.stock -= quantity
                     product.save()
-                    item = CartItem.objects.create(product=product, quantity=quantity, user=request.user)
-                    order.items.add(item)
+                    item_total = float(product.price * quantity)
+                    order_items.append({'product': product.name, 'quantity': quantity, 'total': item_total})
                     ordered_items.append({'product': product, 'quantity': quantity, 'total': product.price * quantity})
                 else:
                     messages.error(request, f"Insufficient stock for {product.name}. Order not placed.")
                     return redirect('store:view_cart')
-            
+            order.items = order_items
+            order.shipping_address = address
             order.save()
             request.session['cart'] = {}  
             messages.success(request, "Order placed successfully!")
@@ -153,6 +153,33 @@ def checkout(request):
     return render(request, 'checkout.html', {'form': form,'cart_items': cart_items,'total_price': total_price,'categories': categories})
 
 @login_required
-def thank_you(request):
-    ordered_items = request.session.get('ordered_items', [])
-    return render(request, 'thank_you.html')
+def checkout(request):
+    cart = request.session.get('cart', {})
+    cart_items = []
+    total_price = 0
+    for product_id, quantity in cart.items():
+        try:
+            product = Product.objects.get(id=product_id)
+            total = float(product.price) * quantity 
+            cart_items.append({
+                'product': {'id': product.id,'name': product.name,'price': float(product.price)},'quantity': quantity,'total': total})
+            total_price += total
+        except Product.DoesNotExist:
+            continue
+    categories = Category.objects.all()
+    cart_items_count = sum(cart.values())
+    if not cart_items:
+        messages.error(request, "Your cart is empty. Please add items to your cart before checking out.")
+        return redirect('store:view_cart')
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            order_shipment = OrderShipment.objects.create(user=request.user,address=form.cleaned_data['address'],phone=form.cleaned_data['phone'],items=cart_items )
+            request.session['cart'] = {}
+            request.session.modified = True
+            return render(request, 'thank_you.html', {'ordered_items': cart_items,'total_price': total_price,'address': form.cleaned_data['address'],'phone': form.cleaned_data['phone'],'categories': categories,'cart_items_count': 0 })
+        else:
+            messages.error(request, "Please correct the errors in the form.")
+    else:
+        form = CheckoutForm()
+    return render(request, 'checkout.html', {'cart_items': cart_items,'total_price': total_price,'form': form,'categories': categories,'cart_items_count': cart_items_count})
